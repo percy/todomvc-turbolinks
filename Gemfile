@@ -12,17 +12,10 @@ gem "jquery-rails"
 gem 'turbolinks', github: 'rails/turbolinks'
 gem 'puma'
 
-group :development, :test do
-  gem 'spring'
-  gem 'stackprof'
-  gem 'rack-mini-profiler'
-  gem 'flamegraph'
-  gem 'pry'
-end
-
 group :test do
   gem 'capybara'
-  gem 'selenium-webdriver'
+  gem 'poltergeist'
+  gem 'database_cleaner'
 end
 
 group :production do

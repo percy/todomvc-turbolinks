@@ -2,6 +2,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'capybara/rails'
+require 'capybara/poltergeist'
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -10,21 +11,20 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 end
 
-module JSDriver
-  def require_js
-    Capybara.current_driver = :selenium
-  end
-
-  def teardown
-    super
-    Capybara.use_default_driver
-  end
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app,
+    debug: false,
+    js_errors: true,
+    timeout: 180
+  )
 end
+
+Capybara.default_driver = :poltergeist
+
 
 class ActionDispatch::IntegrationTest
   # Make the Capybara DSL available in all integration tests
   include Capybara::DSL
-  include JSDriver
 end
 
 class ActiveRecord::Base
@@ -36,3 +36,5 @@ class ActiveRecord::Base
   end
 end
 ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+
+DatabaseCleaner.strategy = :truncation, { pre_count: true, reset_ids: false }
